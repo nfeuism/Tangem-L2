@@ -1,101 +1,100 @@
-# Tangem L2 Recovery — 可安装 App + 完整可编译工程
+# Tangem L2 Recovery
 
-用你的 Tangem NFC 硬件卡，把卡在 Mode / Scroll / zkLink Nova 等 L2 上的 ETH 和 ERC20 代币转出来。硬件签名，私钥永不离卡。
+**English** · [中文](#中文)
 
----
+A minimal Android companion wallet for **Tangem NFC hardware cards**, built to
+sign transactions on **L2 networks the official Tangem app does not support**
+(e.g. **Mode**) and any custom EVM chain.
 
-## 📦 交付物
+## Why this exists
 
-```
-/Users/zosie/Downloads/tangem/
-├── TangemL2Recovery.apk           ← 直接装手机（17MB，已签名，含全部修复）
-├── TangemL2Recovery-source.zip    ← 完整可编译工程（自包含，换机即编）
-└── TangemL2Recovery/              ← 同上，未压缩的工程目录
-```
+The official Tangem app only supports the networks baked into its closed-source
+`blockchain-sdk`. If you bridge or receive tokens on a network it doesn't list
+(such as **Mode**, chainId 34443), those assets become **invisible and
+unmovable** in the official app — there's no way to add a custom RPC/chainId.
 
----
+This tool exists so you can **still sign and move those stranded tokens**, and
+as a safety net **before** you accidentally send tokens to a network the
+official app can't reach. Add any chain by RPC + chainId, scan your card, sign.
 
-## 📱 安装
+## Features
 
-**方式 A（数据线，最稳）** — 手机开 USB 调试后：
+- Add **custom networks** (name + RPC; chainId auto-fetched & verified on-chain)
+- Send **native ETH**, **ERC20 tokens**, or **arbitrary contract calls** (paste calldata — covers redeem / bridge / approve)
+- **QR scan** for recipient address · **MAX** button (exact balance, no float rounding)
+- Pre-send **balance check** (blocks `value + gas > balance` before you tap the card)
+- **On-chain receipt verification** after broadcast (real success vs revert — no fake "sent")
+- Correct L2 **gas pricing** (uses network price, no inflated floor) + `estimateGas`
+- Persistent **on-device log** with export button (for diagnosing failed transfers)
+
+## Build
+
 ```bash
-~/android-toolchain/android-sdk/platform-tools/adb install -r "/Users/zosie/Downloads/tangem/TangemL2Recovery.apk"
+# JDK 17 + Android SDK (compileSdk 34). Dependencies vendored in offline-repo/.
+./gradlew assembleDebug
+# output: app/build/outputs/apk/debug/app-debug.apk
+# prebuilt: release/TangemL2Recovery.apk
 ```
-**方式 B** — 把 apk 发到手机点开安装，允许「未知来源」。
 
-> Debug 签名测试包，功能完整，无法上架商店。手机提示「未验证开发者」选「仍然安装」。
+## Optional: bind to your own address
+
+`EXPECTED_ADDRESS` in `app/src/main/java/com/example/tangeml2/L2Network.kt` is
+**empty by default** (generic tool, no address bound). Set it to your own
+address if you want the app to verify the card's derived key matches a known
+address on scan.
+
+## ⚠️ Security
+
+- Your Tangem card's **access code (PIN)** is enforced by the Tangem SDK itself — this app adds no custom crypto.
+- **"Contract call" is blind signing** — the app cannot decode calldata. Only paste calldata from sources you trust.
+- **Always test with a tiny amount first.** L2s (especially zkSync-stack chains like zkLink Nova) have gas quirks.
+- Debug-signed APK. Review the source before signing anything real.
 
 ---
 
-## 🕹️ 使用流程
+## 中文
 
-1. **① 选择网络** — 下拉选 Mode / Scroll / zkLink Nova / Sepolia 测试网，或点「➕ 添加自定义网络」输入名称+RPC（chainId 自动从 RPC 拉取校验，防止签错链）。
-2. **② 扫描 Tangem 卡片** — 贴卡到 NFC 区。App 派生地址并自动与主网地址 `0xafE1…7421` 比对（✅通过 / ⚠️不匹配会警告）。下方显示卡片固件和是否设了密码。
-3. **③ 资产类型**：
-   - **原生 ETH** — 直接转 ETH。
-   - **ERC20 代币** — 输入代币合约地址 → 点「🔍 查询代币信息」确认符号/精度/余额 → 再发送。
-4. **④ 收款信息** — 手输地址，或「📷 扫码填入」扫二维码，或「🧪 填入本卡地址」自转测试。填金额。
-5. **⑤ 签名并发送** — 再次贴卡，卡内 secp256k1 签名 → 广播 → 显示交易哈希和浏览器链接。
+一个极简的 **Tangem NFC 硬件钱包** 安卓伴侣应用,专为在 **Tangem 官方应用不支持的 L2
+网络**(如 **Mode**)及任意自定义 EVM 链上签名交易而做。
 
----
+### 为什么需要它
 
-## 🔧 换机重新编译
+官方 Tangem 应用只支持其闭源 `blockchain-sdk` 内置的网络。如果你把代币跨链/接收到了它
+未收录的网络(比如 **Mode**,chainId 34443),这些资产在官方应用里会**看不到、也动不了**——
+官方应用**不支持添加自定义 RPC / chainId**。
 
-工程**自包含**（内置 `offline-repo/` 离线 Tangem SDK），无需联网拉 Tangem SDK：
+本工具的用途:让你**仍能签名、把这些被困的代币转出来**,同时作为一道**防线**——
+避免有人不小心把代币转入官方应用够不到的网络后无法取回。用 RPC + chainId 添加任意链,
+贴卡,签名即可。
+
+### 功能
+
+- 添加**自定义网络**(名称 + RPC;chainId 自动从链上拉取并校验)
+- 发送**原生 ETH**、**ERC20 代币**、或**任意合约调用**(粘贴 calldata——覆盖 赎回 / 跨链桥 / approve)
+- 收款地址**二维码扫描** · **全部余额**按钮(用整数精确填入,杜绝浮点上浮)
+- 发送前**余额校验**(`金额 + gas > 余额` 时直接拦下,不浪费贴卡)
+- 广播后**回链核实 receipt**(区分真成功与 revert,不再假报"已发送")
+- 正确的 L2 **gas 定价**(用网络实价,无虚高地板)+ `estimateGas`
+- 设备内**持久化日志** + 导出按钮(用于诊断失败的转账)
+
+### 编译
+
 ```bash
-# 解压后
-cd TangemL2Recovery
-echo "sdk.dir=/你的/Android/SDK/路径" > local.properties   # 唯一需要改的
+# JDK 17 + Android SDK (compileSdk 34)。依赖已内置在 offline-repo/。
 ./gradlew assembleDebug
 # 产物: app/build/outputs/apk/debug/app-debug.apk
-```
-> 已用**全新空 gradle 缓存**冷编译验证通过（7分21秒，36 任务全绿），证明工程真正可移植。
-> 首次编译需联网下载 web3j / androidx / zxing 等公共依赖（Tangem SDK 走内置离线仓库）。
-
-### 工程结构
-```
-TangemL2Recovery/
-├── offline-repo/          # ★ 内置 Tangem SDK 3.9.2（AAR+JAR+POM），换机编译关键
-├── settings.gradle.kts    # 仓库配置（offline-repo 优先）
-├── gradle/libs.versions.toml
-├── app/
-│   ├── build.gradle.kts   # 依赖：Tangem SDK + Web3j 4.9.8 + zxing
-│   └── src/main/
-│       ├── AndroidManifest.xml   # NFC + CAMERA 权限
-│       ├── java/com/example/tangeml2/
-│       │   ├── MainActivity.kt        # 全流程 UI
-│       │   ├── TransactionHelper.kt   # 交易构建/EIP-155签名恢复/ERC20/广播
-│       │   └── L2Network.kt           # 网络定义（预置+自定义）
-│       └── res/
+# 预编译: release/TangemL2Recovery.apk
 ```
 
----
+### 可选:绑定你自己的地址
 
-## 🔐 关于「原版 Tangem 要输密码」
+`app/src/main/java/com/example/tangeml2/L2Network.kt` 里的 `EXPECTED_ADDRESS`
+**默认为空**(通用工具,不绑定任何地址)。如需让应用在扫卡时校验派生地址是否与已知地址
+一致,填入你自己的地址即可。
 
-排查结论：**本 App 没有任何自定义加解密逻辑会阻断转账**。
-- 若你的卡设过 access code（密码），签名时是 **Tangem SDK 原生弹出**的密码框，输入即继续——这是 SDK 行为，不是 App 加的障碍。
-- 若没设密码，直接贴卡签名。
-- 扫码后的界面会显示「已设密码 / 无密码」供你确认。
+### ⚠️ 安全须知
 
----
-
-## ⚠️ 动真钱前务必做
-
-**先在 Sepolia 测试网演练一遍**（已内置在网络列表）：领测试 ETH → 扫卡确认地址匹配 → 发一笔小额自转 → 浏览器确认成功。签名恢复（recovery id / EIP-155 v）是唯一的丢币点，字节码正确 ≠ 链上一定接受，只能真机+真卡端到端验证一次才稳。
-
-**zkLink Nova 是 zkSync 栈链**，Legacy 交易是否被完全接受属经验问题，务必先在该链小额自测。
-
----
-
-## 📋 已知边界（非 bug，是设计范围）
-
-| 支持 | 不支持 |
-|------|--------|
-| 原生 ETH 转账 | EIP-1559 交易（L2 基本兼容 Legacy） |
-| ERC20 `transfer()` 转账 | ERC20 `approve` + `transferFrom` 授权转账 |
-| 自定义网络/合约地址 | 任意 dApp 合约调用 / WalletConnect |
-| 二维码扫**收款地址** | 二维码扫任意合约 ABI |
-
-> ERC20 的 `transfer()` 花的是你自己的代币余额，**不需要** approve。
-> 二维码仅用于填收款地址，不是签署任意合约的入口。
+- 卡片的**访问密码(PIN)**由 Tangem SDK 原生强制,本应用**不添加任何自定义加解密**。
+- **"合约调用"是盲签**——应用无法解析 calldata,只粘贴你信任来源的 calldata。
+- **务必先用极小额测试。** L2(尤其 zkLink Nova 等 zkSync 栈链)的 gas 行为有差异。
+- Debug 签名 APK。动真钱前请先审阅源码。
