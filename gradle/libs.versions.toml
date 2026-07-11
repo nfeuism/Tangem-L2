@@ -1,0 +1,29 @@
+[versions]
+agp = "8.10.1"
+kotlin = "2.1.10"
+coroutines = "1.10.2"
+web3j = "4.9.8"
+appcompat = "1.6.1"
+activity = "1.9.0"
+material = "1.12.0"
+constraintlayout = "2.1.4"
+coreKtx = "1.13.1"
+desugar = "2.0.4"
+json = "20240303"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version = "2.7.0" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+web3j-core = { module = "org.web3j:core", version.ref = "web3j" }
+json = { module = "org.json:json", version.ref = "json" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+zxing-embedded = { module = "com.journeyapps:zxing-android-embedded", version = "4.3.0" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

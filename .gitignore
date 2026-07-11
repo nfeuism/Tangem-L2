@@ -1,0 +1,21 @@
+# ── 构建中间产物 ──
+.gradle/
+build/
+/app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ── 机器特定（含绝对路径，绝不提交）──
+local.properties
+
+# ── IDE ──
+.idea/
+*.iml
+
+# ── 系统 ──
+.DS_Store
+
+# ⚠️ 注意：不要在此忽略 *.jar / *.aar / offline-repo/ —
+#    offline-repo/ 的 aar/jar/pom 和 gradle/wrapper/gradle-wrapper.jar
+#    是「clone 即可编译」的命脉，必须提交。

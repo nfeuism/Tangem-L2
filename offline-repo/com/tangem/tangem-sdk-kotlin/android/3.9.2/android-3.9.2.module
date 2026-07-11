@@ -1,0 +1,197 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.tangem.tangem-sdk-kotlin",
+    "module": "android",
+    "version": "3.9.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "android",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "android-3.9.2.aar",
+          "url": "android-3.9.2.aar",
+          "size": 501695,
+          "sha512": "08e13bee6203d7d45fc8c13e7eb915bc37b9665e918620304eb88f642e38423f30df7d78198e5acc0da0d7bda4f30312ca08bfa84c121acf882ddbf943c7a3b4",
+          "sha256": "e62cfb177b74409713d3ebf77296552edd37e200c8eac0576d9a7cbab3db1997",
+          "sha1": "4d871c671c5fda92df5310c0788b3cebae9589f8",
+          "md5": "61214e8e7f5da76ba9723fa5d678f7f2"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "android",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.tangem.tangem-sdk-kotlin",
+          "module": "core",
+          "version": {
+            "requires": "3.9.2"
+          }
+        },
+        {
+          "group": "androidx.activity",
+          "module": "activity-ktx",
+          "version": {
+            "requires": "1.8.2"
+          }
+        },
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.6.1"
+          }
+        },
+        {
+          "group": "androidx.biometric",
+          "module": "biometric",
+          "version": {
+            "requires": "1.1.0"
+          }
+        },
+        {
+          "group": "androidx.constraintlayout",
+          "module": "constraintlayout",
+          "version": {
+            "requires": "2.0.4"
+          }
+        },
+        {
+          "group": "androidx.core",
+          "module": "core-ktx",
+          "version": {
+            "requires": "1.13.1"
+          }
+        },
+        {
+          "group": "androidx.fragment",
+          "module": "fragment-ktx",
+          "version": {
+            "requires": "1.6.2"
+          }
+        },
+        {
+          "group": "androidx.lifecycle",
+          "module": "lifecycle-runtime-ktx",
+          "version": {
+            "requires": "2.7.0"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.10.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core-jvm",
+          "version": {
+            "requires": "1.10.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-reflect",
+          "version": {
+            "requires": "2.1.10"
+          }
+        },
+        {
+          "group": "at.favre.lib",
+          "module": "armadillo",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "com.skyfishjy.ripplebackground",
+          "module": "library",
+          "version": {
+            "requires": "1.0.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "android-3.9.2.aar",
+          "url": "android-3.9.2.aar",
+          "size": 501695,
+          "sha512": "08e13bee6203d7d45fc8c13e7eb915bc37b9665e918620304eb88f642e38423f30df7d78198e5acc0da0d7bda4f30312ca08bfa84c121acf882ddbf943c7a3b4",
+          "sha256": "e62cfb177b74409713d3ebf77296552edd37e200c8eac0576d9a7cbab3db1997",
+          "sha1": "4d871c671c5fda92df5310c0788b3cebae9589f8",
+          "md5": "61214e8e7f5da76ba9723fa5d678f7f2"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "android",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "android-3.9.2-sources.jar",
+          "url": "android-3.9.2-sources.jar",
+          "size": 144255,
+          "sha512": "a6afca7ffd2ec1274b1149992b9477f578d43b577ae9170a9eaab6aabba7a38095904fe89e26d91e96882ab543940ac491294500cdd44084a4c2d13a318dce9f",
+          "sha256": "d8ca417f70fa61fbe3621361256252bb4a0cadce15fea2568529f77cb0513a8a",
+          "sha1": "b8ebba71763d0caba51e1df4c59374e53fc858db",
+          "md5": "49df111ea6e5c181486acdc7426dffe6"
+        }
+      ]
+    }
+  ]
+}

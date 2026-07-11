@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ═══ 网络选择 ═══ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="① 选择网络"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/spinnerNetwork"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <Button
+            android:id="@+id/btnAddNetwork"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="➕ 添加自定义网络 (RPC + ChainID)"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- ═══ 扫卡 ═══ -->
+        <Button
+            android:id="@+id/btnScanCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📱 ② 扫描 Tangem 卡片"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:background="#EEEEEE"
+            android:textColor="@color/black"
+            android:text="地址: (扫码后显示)"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvCardInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:text=""
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tvBalance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="余额: (扫码后查询)"
+            android:layout_marginTop="8dp" />
+
+        <!-- ═══ 资产类型 ═══ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="③ 资产类型"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="12dp" />
+
+        <RadioGroup
+            android:id="@+id/rgAssetType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/rbNative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="原生 ETH"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbToken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ERC20 代币"
+                android:layout_marginStart="16dp" />
+
+            <RadioButton
+                android:id="@+id/rbContract"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="合约调用"
+                android:layout_marginStart="16dp" />
+        </RadioGroup>
+
+        <!-- 代币合约地址（仅代币模式可见） -->
+        <LinearLayout
+            android:id="@+id/layoutToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/etTokenContract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="代币合约地址 0x..."
+                android:inputType="text"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <Button
+                android:id="@+id/btnLoadToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔍 查询代币信息 (符号/精度/余额)"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvTokenInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#1B60E0"
+                android:text=""
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- 合约调用 calldata（仅合约调用模式可见） -->
+        <LinearLayout
+            android:id="@+id/layoutContract"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚠️ 合约调用：④填合约地址，下方填 calldata，⑤金额填随调用发送的 ETH（赎回通常填 0）。App 无法解析 calldata，请确认来源可信（盲签）。"
+                android:textSize="11sp"
+                android:textColor="#B8860B"
+                android:layout_marginTop="4dp" />
+
+            <EditText
+                android:id="@+id/etCalldata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Calldata 0x...（从 Etherscan Write 合约或 dApp 复制）"
+                android:inputType="textMultiLine"
+                android:fontFamily="monospace"
+                android:textSize="11sp"
+                android:minLines="3"
+                android:gravity="top"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- ═══ 收款 ═══ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="④ 收款信息"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="12dp" />
+
+        <EditText
+            android:id="@+id/etToAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="接收地址 0x..."
+            android:inputType="text"
+            android:fontFamily="monospace"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/btnScanQr"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="📷 扫码填入"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnTestAddress"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="🧪 填入本卡地址"
+                android:textSize="12sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="金额 (ETH 或代币数量)"
+            android:inputType="numberDecimal"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全部余额（精确填入）"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp" />
+
+        <!-- ═══ 发送 ═══ -->
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="✈️ ⑤ 签名并发送"
+            android:enabled="false"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:background="#F5F5F5"
+            android:textColor="@color/black"
+            android:text="就绪。"
+            android:layout_marginTop="16dp"
+            android:minLines="4" />
+
+        <!-- ═══ 日志系统 ═══ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⑥ 日志（排查问题时导出发给开发者）"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <Button
+                android:id="@+id/btnExportLog"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="📤 导出日志"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnViewLog"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="👁 查看"
+                android:textSize="12sp"
+                android:layout_marginStart="6dp" />
+
+            <Button
+                android:id="@+id/btnClearLog"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="🗑 清空"
+                android:textSize="12sp"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
