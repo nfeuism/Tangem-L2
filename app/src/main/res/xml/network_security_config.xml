@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A wallet must not talk to an RPC over plaintext: a man-in-the-middle could feed
+  fake balances and fake chain ids. HTTPS is required for every remote endpoint.
+
+  The only cleartext exceptions are loopback / emulator-host addresses, which is
+  what a developer running a local node needs.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

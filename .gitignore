@@ -19,3 +19,7 @@ local.properties
 # ⚠️ 注意：不要在此忽略 *.jar / *.aar / offline-repo/ —
 #    offline-repo/ 的 aar/jar/pom 和 gradle/wrapper/gradle-wrapper.jar
 #    是「clone 即可编译」的命脉，必须提交。
+
+# ── 构建环境代理的缓存与日志（仅本机构建辅助，不提交）──
+build-env/.maven-cache/
+build-env/proxy.log

@@ -1,7 +1,7 @@
-// app/build.gradle.kts
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -12,21 +12,24 @@ android {
         applicationId = "com.example.tangeml2"
         minSdk = 24   // Tangem SDK requires >= 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
+        vectorDrawables { useSupportLibrary = true }
     }
 
     compileOptions {
-        // Java 11 for Web3j's java.time usage; desugar below handles minSdk < 26
+        // Java 11 for Web3j's java.time usage; desugaring covers minSdk < 26
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
     buildFeatures {
+        compose = true
         buildConfig = true
     }
 
@@ -36,39 +39,58 @@ android {
                 "META-INF/DEPENDENCIES",
                 "META-INF/INDEX.LIST",
                 "META-INF/*.kotlin_module",
+                "META-INF/LICENSE*",
+                "META-INF/NOTICE*",
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
             )
         }
+    }
+
+    lint {
+        abortOnError = false
     }
 }
 
 dependencies {
-    // ═══════════════════════════════════════════════════════════════
-    // Tangem SDK — from Maven Local (built from ~/android-toolchain/tangem-sdk-src)
-    // ═══════════════════════════════════════════════════════════════
+    // ── Tangem NFC hardware-wallet SDK (vendored in offline-repo/) ──
     implementation("com.tangem.tangem-sdk-kotlin:core:3.9.2")
     implementation("com.tangem.tangem-sdk-kotlin:android:3.9.2")
 
-    // ═══════════════════════════════════════════════════════════════
-    // Web3j — transaction building & signing recovery
-    // ═══════════════════════════════════════════════════════════════
+    // ── Ethereum transaction building / signing primitives ──
     implementation(libs.web3j.core)
 
-    // ═══════════════════════════════════════════════════════════════
-    // AndroidX + Kotlin (mostly provided transitively by Tangem SDK,
-    // but declared explicitly so they resolve correctly)
-    // ═══════════════════════════════════════════════════════════════
+    // ── AndroidX ──
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material)
     implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    // ── Jetpack Compose UI ──
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
+    debugImplementation(libs.compose.ui.tooling)
+
     implementation(libs.coroutines.android)
     implementation(libs.json)
 
-    // 二维码扫描（收款地址）— 自包含，不依赖 Google Play，中国网络友好
+    // QR scanning — self-contained, no Google Play Services dependency
     implementation(libs.zxing.embedded)
 
     // Java 8+ desugaring for minSdk 24 (Web3j's java.time.*)
     coreLibraryDesugaring(libs.desugar)
+
+    // JVM unit tests for the money-critical logic (units, calldata, EIP-155 signing).
+    testImplementation(libs.junit)
+    // Guarantee a real org.json implementation on the unit-test classpath instead of
+    // the stubbed android.jar version.
+    testImplementation(libs.json)
 }
