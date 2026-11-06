@@ -10,7 +10,7 @@
 | AGP / Kotlin | 8.10.1 / 2.1.10 |
 | Android SDK | platform 34 + build-tools 34.0.0 |
 | 模拟器 | Android Emulator 37.3.6.0，Android 14 (API 34) google_apis arm64-v8a，1080×2340 |
-| 产物 | `release/TangemL2Recovery.apk`（debug 签名，31.9 MiB） |
+| 产物 | `release/TangemL2Recovery.apk`（R8 裁剪的 release 构建，debug keystore 签名，5.89 MiB） |
 
 > 本机 Google Maven CDN 会间歇性返回 404，构建走 `build-env/` 里的本地镜像重试代理。
 > 该代理只影响构建，不进入 App。
@@ -18,10 +18,27 @@
 ## 1. 编译与测试
 
 ```
-./gradlew clean assembleDebug     -> BUILD SUCCESSFUL
-./gradlew testDebugUnitTest       -> 37 tests, 0 failures
-./gradlew lintDebug               -> 0 errors, 25 warnings（版本/风格建议）
+./gradlew clean assembleRelease  -> BUILD SUCCESSFUL
+./gradlew testDebugUnitTest      -> 37 tests, 0 failures
+./gradlew lintDebug              -> 0 errors, 25 warnings（版本/风格建议）
 ```
+
+### 构建类型与体积（R8）
+
+| 构建 | APK | dex 类型数 | 冷启动（模拟器） |
+|---|---|---|---|
+| v1（重构前） | 18.9 MiB | — | — |
+| v2 `assembleDebug`（未裁剪，仅开发用） | 31.88 MiB | 54,735 | +3720 ms |
+| v2 `assembleRelease`（R8 + 资源裁剪，交付用） | **5.89 MiB** | 10,294 | **+399 ~ +666 ms** |
+
+debug 包里占比最大的两类是 web3j 传递依赖（RxJava / BouncyCastle / SpongyCastle /
+Jackson / jnr，24.2% 的 dex 类型）和 `material-icons-extended`（20.9%，项目只用了 15 个图标
+却带进 11,429 个图标类）。R8 会摇掉这些未使用部分。`app/proguard-rules.pro` 对 Tangem
+NFC 栈、web3j crypto API、应用自身和 zxing 采用保守 keep —— 钱包应用宁可多留一些类，
+也不能在贴卡签名时因反射缺类而失败。
+
+R8 裁剪包已在 Android 14 模拟器上重新安装并冒烟验证：无崩溃、Tangem SDK 初始化正常、
+UI 渲染一致（`docs/screenshots/11-r8-release.png`）。
 
 ### 单元测试覆盖（37 项）
 | 测试类 | 数量 | 覆盖内容 |
@@ -71,8 +88,10 @@ adb logcat -b crash -> 空
 | `05-qr-review.png` | **扫码结果面板**：来源徽章、函数徽章、链不一致警告、目标合约、chainId、金额、gas、`transfer` 解码结果与参数表、原始 calldata、双操作按钮 |
 | `06-confirm-sheet.png` | **交易确认面板**：网络/从/到/资产/数量/手续费上限/合计/调用、calldata、自定义网络警告、取消 / 贴卡签名 |
 | `07-log-sheet.png` | 诊断日志面板：真实运行日志、刷新/清空/导出/关闭 |
-| `08-add-network.png` | 添加自定义网络对话框：三个字段、占位符、空值时确认按钮正确禁用 |
+| `08-clean-start-dark.png` | 移除临时 QA 注入后重新构建的干净启动态（确认不会自动弹出面板） |
 | `09-light-network-sheet.png` | 浅色网络面板 |
+| `10-add-network-dialog.png` | 添加自定义网络对话框：三个字段、占位符、空值时确认按钮正确禁用 |
+| `11-r8-release.png` | **R8 裁剪后的 release 包**启动结果：UI 与 debug 包一致、无崩溃 |
 
 ### 交互验证
 - 分段控件切换（原生币 / ERC20 / 合约调用）正常，联动显示不同字段。
@@ -107,6 +126,10 @@ adb logcat -b crash -> 空
 2. 签名流程（`sign` → recovery id 恢复 → EIP-155 组装 → 广播）。签名组装本身已由
    单元测试用官方向量验证，但 NFC 会话交互只能真机测。
 3. 真实链上的余额查询与广播（模拟器可联网，但没有可用的测试卡）。
+4. **R8 裁剪后的 NFC 签名路径**：模拟器只验证了启动、Tangem SDK 初始化和 UI 渲染。
+   `app/proguard-rules.pro` 已保守 keep 整个 `com.tangem.**` 与 `org.web3j.**`，
+   但贴卡时才触发的反射路径仍建议真机确认一次。若遇到 `ClassNotFoundException`，
+   在 `docs/` 里附日志并把对应类加入 keep 规则即可。
 
 建议：
 ```bash

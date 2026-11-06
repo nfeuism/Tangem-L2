@@ -100,9 +100,18 @@ Captured on an Android 14 emulator (1080×2340); see `docs/screenshots/`.
 Requires **JDK 17** and **Android SDK 34** (platform + build-tools).
 
 ```bash
-./gradlew assembleDebug
-# -> app/build/outputs/apk/debug/app-debug.apk
+./gradlew assembleRelease   # distributable APK — R8 minified, ~5.9 MB
+./gradlew assembleDebug     # development only — unminified, ~32 MB
 ```
+
+The release build is what ships as `release/TangemL2Recovery.apk` and on the
+[Releases page](https://github.com/nfeuism/Tangem-L2/releases). R8 removes the
+unused parts of web3j's transitive dependencies, the unused Material icon set and
+unused Compose code paths, cutting the APK by ~82%. It is signed with the debug
+keystore on purpose: this project ships an openly reviewable, sideloadable APK,
+not a Play Store artifact. Keep rules for the Tangem NFC stack are deliberately
+conservative (see `app/proguard-rules.pro`) — a missing class at signing time is
+far worse than a slightly larger APK.
 
 The Tangem SDK is vendored in `offline-repo/`, so the project resolves it without any
 local Maven setup.
@@ -114,13 +123,13 @@ and the Android SDK, then starts a local retrying/caching mirror and points Grad
 at it.
 
 ```bash
-./build-env/build.sh assembleDebug
+./build-env/build.sh assembleRelease
 ./build-env/build.sh testDebugUnitTest
-USE_MAVEN_PROXY=0 ./build-env/build.sh assembleDebug   # skip the proxy
+USE_MAVEN_PROXY=0 ./build-env/build.sh assembleRelease   # skip the proxy
 ```
 
 It is a build-environment shim only — it does not affect the app or its dependencies.
-On a normal network, plain `./gradlew assembleDebug` works fine.
+On a normal network, plain `./gradlew assembleRelease` works fine.
 
 ## Tests
 

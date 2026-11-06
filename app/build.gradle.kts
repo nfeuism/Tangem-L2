@@ -28,6 +28,23 @@ android {
         freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
+    // The distributable APK is a *minified* release build. The debug build keeps
+    // every class (including ~11k unused Material icons and web3j's entire
+    // transitive tree) and weighs ~32 MB; R8 brings the release build to ~5.9 MB.
+    // It is signed with the debug keystore on purpose: this project ships an
+    // openly reviewable, sideloadable APK rather than a Play Store artifact.
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

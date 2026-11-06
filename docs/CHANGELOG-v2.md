@@ -53,12 +53,21 @@
 ## 四、验证情况
 
 ```
-./gradlew testDebugUnitTest   -> 37 tests, 0 failures
-./gradlew assembleDebug       -> BUILD SUCCESSFUL, app-debug.apk
+./gradlew testDebugUnitTest    -> 37 tests, 0 failures
+./gradlew assembleRelease      -> BUILD SUCCESSFUL, 5.89 MiB（R8 裁剪）
 ```
 
 关键验证点：`TxCodecTest` 用 **EIP-155 官方测试向量**校验签名哈希，并与 **web3j 自带
 签名器逐字节对拍**，另外覆盖 Scroll 大 chainId（`v` 超 1 字节）与「公钥不匹配必须拒绝」。
+
+### 发布包体积修正
+
+初次发布误用了未裁剪的 `assembleDebug` 产物（31.88 MiB）。后续固化为 **`assembleRelease`**：
+开启 R8 代码裁剪 + 资源裁剪，交付包降至 **5.89 MiB（-81.5%）**，比 v1 的 18.9 MiB 还小。
+debug 包里占比最大的 web3j 传递依赖（24.2% dex 类型）与 `material-icons-extended`
+（20.9%，仅用 15 个图标却带进 11,429 类）在 release 构建中被摇掉。
+裁剪包已在 Android 14 模拟器重新安装验证：无崩溃、Tangem SDK 初始化正常、UI 一致。
+`app/proguard-rules.pro` 对 Tangem NFC 栈刻意保守 keep，避免贴卡签名时因反射缺类而失败。
 
 ## 五、已知限制
 

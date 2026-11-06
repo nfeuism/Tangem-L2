@@ -90,9 +90,16 @@ ui/screens/        界面
 需要 **JDK 17** 与 **Android SDK 34**（platform + build-tools）。
 
 ```bash
-./gradlew assembleDebug
-# 产物：app/build/outputs/apk/debug/app-debug.apk
+./gradlew assembleRelease   # 分发用：R8 裁剪，约 5.9 MB
+./gradlew assembleDebug     # 仅开发用：未裁剪，约 32 MB
 ```
+
+`release/TangemL2Recovery.apk` 与 [Releases 页面](https://github.com/nfeuism/Tangem-L2/releases)
+上的安装包都是 **release 构建**。R8 会摇掉 web3j 传递依赖里未使用的部分、未使用的
+Material 图标集和未使用的 Compose 代码路径，体积减少约 82%。它特意用 debug keystore
+签名：本项目交付的是可公开审阅、可侧载的 APK，不是应用商店产物。
+Tangem NFC 栈的 keep 规则刻意保守（见 `app/proguard-rules.pro`）—— 对钱包来说，
+贴卡签名时缺类比 APK 稍大一点严重得多。
 
 Tangem SDK 已内置在 `offline-repo/`，clone 即可编译，不依赖本机 Maven 配置。
 
@@ -101,12 +108,12 @@ Tangem SDK 已内置在 `offline-repo/`，clone 即可编译，不依赖本机 M
 可选辅助脚本：自动探测 JDK 17 与 Android SDK，启动本地镜像/重试代理并让 Gradle 走它：
 
 ```bash
-./build-env/build.sh assembleDebug
+./build-env/build.sh assembleRelease
 ./build-env/build.sh testDebugUnitTest
-USE_MAVEN_PROXY=0 ./build-env/build.sh assembleDebug   # 跳过代理
+USE_MAVEN_PROXY=0 ./build-env/build.sh assembleRelease   # 跳过代理
 ```
 
-它只是构建环境补丁，不影响 App 本身。网络正常时直接用 `./gradlew assembleDebug` 即可。
+它只是构建环境补丁，不影响 App 本身。网络正常时直接用 `./gradlew assembleRelease` 即可。
 
 ## 测试
 
